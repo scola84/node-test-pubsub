@@ -11,6 +11,8 @@
     "@scola/api-model": "^1.0.0",
     "@scola/api-router": "^1.0.0",
     "@scola/api-ws": "^1.0.0",
+    "bufferutil": "^1.2.1",
+    "utf-8-validate": "^1.2.1",
     "ws": "^1.1.1"
   },
   "devDependencies": {
@@ -21,7 +23,6 @@
   },
   "scripts": {
     "build": "rollup -c",
-    "serve": "npm run pm2",
-    "pm2": "pm2 start dist/server.js --name \"pubsub\""
+    "serve": "pm2 start dist/server.js --name \"pubsub\""
   }
 }

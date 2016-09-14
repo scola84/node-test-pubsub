@@ -5,6 +5,8 @@ import { Router, handleError } from '@scola/api-router';
 import { codec } from '@scola/api-codec-json';
 import { PubSub, pubsubRoutes } from '@scola/api-model';
 
+import config from './config';
+
 function parseAddress(connection) {
   return connection && connection.address().address || '';
 }
@@ -18,7 +20,7 @@ function logRequest(request, response, next) {
   next();
 }
 
-const server = new ws.Server({ port: 8001 });
+const server = new ws.Server(config.pubsub);
 const router = new Router();
 const connector = new Connector()
   .server(server)
