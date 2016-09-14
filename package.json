@@ -1,0 +1,27 @@
+{
+  "name": "",
+  "version": "0.0.0",
+  "description": "Test PubSub Server",
+  "repository": "",
+  "author": "M.C. van den Boogaart <scola@kvdb.name>",
+  "license": "MIT",
+  "main": "index.js",
+  "dependencies": {
+    "@scola/api-codec-json": "^1.0.0",
+    "@scola/api-model": "^1.0.0",
+    "@scola/api-router": "^1.0.0",
+    "@scola/api-ws": "^1.0.0",
+    "ws": "^1.1.1"
+  },
+  "devDependencies": {
+    "rollup": "^0.35.10",
+    "rollup-plugin-commonjs": "^4.1.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "watch": "^0.19.2"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "serve": "npm run pm2",
+    "pm2": "pm2 start dist/server.js --name \"pubsub\""
+  }
+}
