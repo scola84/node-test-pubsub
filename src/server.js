@@ -5,7 +5,7 @@ import { Router, handleError } from '@scola/api-router';
 import { codec } from '@scola/api-codec-json';
 import { PubSub, pubsubRoutes } from '@scola/api-model';
 
-import config from '../config';
+import { config } from '../config';
 
 function parseAddress(connection) {
   return connection && connection.address().address || '';
