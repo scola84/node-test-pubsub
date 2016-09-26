@@ -8,9 +8,11 @@
   "main": "index.js",
   "dependencies": {
     "@scola/api-codec-json": "^1.0.0",
+    "@scola/api-log": "^1.0.0",
     "@scola/api-model": "^1.0.2",
     "@scola/api-router": "^1.0.0",
-    "@scola/api-ws": "^1.0.1",
+    "@scola/api-ws": "^2.0.0",
+    "async": "^2.0.1",
     "bufferutil": "^1.2.1",
     "utf-8-validate": "^1.2.1",
     "ws": "^1.1.1"

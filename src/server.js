@@ -1,38 +1,86 @@
+import parallel from 'async/parallel';
 import ws from 'ws';
 
-import { Connector } from '@scola/api-ws';
-import { Router, handleError } from '@scola/api-router';
 import { codec } from '@scola/api-codec-json';
-import { PubSub, pubsubRoutes } from '@scola/api-model';
 
-import { config } from '../config';
+import {
+  ConnectorHandler,
+  RouterHandler,
+  ConsoleLogger
+} from '@scola/api-log';
 
-function parseAddress(connection) {
-  return connection && connection.address().address || '';
-}
+import {
+  PubSub,
+  pubsubRoutes
+} from '@scola/api-model';
 
-function logRequest(request, response, next) {
-  const date = '[' + new Date().toISOString() + ']';
-  const address = parseAddress(request.connection());
-  const id = request.method() + ' ' + request.url();
+import {
+  Router,
+  handleError
+} from '@scola/api-router';
 
-  console.log(date + ' ' + address + ' ' + id);
-  next();
-}
+import { Connector } from '@scola/api-ws';
+import { config } from '../conf/server';
 
 const server = new ws.Server(config.pubsub);
 const router = new Router();
 const connector = new Connector()
   .server(server)
   .router(router)
-  .codec(codec);
+  .codec(codec)
+  .ping(config.pubsub.ping);
+
+const consoleLogger = new ConsoleLogger();
+
+const wsLog = new ConnectorHandler()
+  .id(config.log.id)
+  .name(config.log.ws.name)
+  .source(connector)
+  .target(consoleLogger)
+  .events(config.log.ws.events);
+
+const routerLog = new RouterHandler()
+  .id(config.log.id)
+  .name(config.log.router.name)
+  .source(router)
+  .target(consoleLogger)
+  .events(config.log.router.events);
 
 const pubsub = new PubSub();
 
-connector.on('error', handleError);
-router.on('error', handleError);
-server.on('error', handleError);
-
-router.filter(logRequest);
-
 pubsubRoutes(router, pubsub);
+
+router.on('error', handleError);
+
+consoleLogger.log({
+  date: new Date(),
+  id: config.log.id,
+  name: config.log.name,
+  type: 'start'
+});
+
+process.on('SIGINT', () => {
+  consoleLogger.log({
+    date: new Date(),
+    id: config.log.id,
+    name: config.log.name,
+    type: 'stop'
+  });
+
+  parallel([
+    (callback) => {
+      connector.close(1001, 'delay=1');
+      callback();
+    },
+    (callback) => {
+      routerLog.end();
+      wsLog.end();
+      callback();
+    },
+    (callback) => {
+      server.close(callback);
+    }
+  ], () => {
+    process.exit();
+  });
+});
