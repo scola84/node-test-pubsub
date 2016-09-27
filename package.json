@@ -11,7 +11,7 @@
     "@scola/api-log": "^1.0.1",
     "@scola/api-model": "^1.0.3",
     "@scola/api-router": "^1.0.0",
-    "@scola/api-ws": "^2.0.1",
+    "@scola/api-ws": "^3.0.0",
     "async": "^2.0.1",
     "ws": "^1.1.1"
   },

@@ -20,14 +20,14 @@ import {
   handleError
 } from '@scola/api-router';
 
-import { Connector } from '@scola/api-ws';
+import { WsConnector } from '@scola/api-ws';
 import { config } from '../conf/server';
 
 const httpServer = new http.Server();
 const wsServer = new WebSocket.Server({ server: httpServer });
 
 const router = new Router();
-const connector = new Connector()
+const connector = new WsConnector()
   .server(wsServer)
   .router(router)
   .codec(codec)
