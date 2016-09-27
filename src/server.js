@@ -1,5 +1,6 @@
+import http from 'http';
 import parallel from 'async/parallel';
-import ws from 'ws';
+import WebSocket from 'ws';
 
 import { codec } from '@scola/api-codec-json';
 
@@ -22,10 +23,12 @@ import {
 import { Connector } from '@scola/api-ws';
 import { config } from '../conf/server';
 
-const server = new ws.Server(config.pubsub);
+const httpServer = new http.Server();
+const wsServer = new WebSocket.Server({ server: httpServer });
+
 const router = new Router();
 const connector = new Connector()
-  .server(server)
+  .server(wsServer)
   .router(router)
   .codec(codec)
   .ping(config.pubsub.ping);
@@ -47,6 +50,9 @@ const routerLog = new RouterHandler()
   .events(config.log.router.events);
 
 const pubsub = new PubSub();
+
+httpServer
+  .listen(config.pubsub.port, config.pubsub.host);
 
 pubsubRoutes(router, pubsub);
 
@@ -78,7 +84,10 @@ process.on('SIGINT', () => {
       callback();
     },
     (callback) => {
-      server.close(callback);
+      httpServer.close(callback);
+    },
+    (callback) => {
+      wsServer.close(callback);
     }
   ], () => {
     process.exit();

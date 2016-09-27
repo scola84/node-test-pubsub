@@ -7,7 +7,12 @@ export default {
   format: 'cjs',
   plugins: [
     resolve({
-      jsnext: true
+      jsnext: true,
+      skip: [
+        'async',
+        'http',
+        'ws'
+      ]
     }),
     commonjs()
   ]
